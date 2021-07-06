@@ -47,6 +47,7 @@ export class AuditServiceComponent implements Component {
       info: {
         title: 'Audit Service',
         version: '1.0.0',
+        description: '## A microservice for audit logging\n### Permissions:\nMost applications need to control who (or what) can access data or call services. Typically, this involves requiring users to login to access protected data, or requiring authorization tokens for other applications to access protected data. So, permission keys are required for accessing those routes. To set permission keys use npm package [`loopback4-authorization`](https://www.npmjs.com/package/loopback4-authorization).\n',
       },
       paths: {},
       components: {

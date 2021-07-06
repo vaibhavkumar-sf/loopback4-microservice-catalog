@@ -20,7 +20,9 @@ headingLevel: 2
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
-A microservice for audit logging
+## A microservice for audit logging
+### Permissions:
+Most applications need to control who (or what) can access data or call services. Typically, this involves requiring users to login to access protected data, or requiring authorization tokens for other applications to access protected data. So, permission keys are required for accessing those routes. To set permission keys use npm package [`loopback4-authorization`](https://www.npmjs.com/package/loopback4-authorization).
 
 Base URLs:
 
@@ -82,6 +84,10 @@ fetch('/audit-logs/count',
 ```
 
 `GET /audit-logs/count`
+
+| Permissions |
+| ------- |
+| ViewAudit |
 
 <h3 id="auditcontroller.count-parameters">Parameters</h3>
 
@@ -160,6 +166,10 @@ fetch('/audit-logs/{id}',
 ```
 
 `GET /audit-logs/{id}`
+
+| Permissions |
+| ------- |
+| ViewAudit |
 
 <h3 id="auditcontroller.findbyid-parameters">Parameters</h3>
 
@@ -271,6 +281,10 @@ fetch('/audit-logs',
 
 `POST /audit-logs`
 
+| Permissions |
+| ------- |
+| CreateAudit |
+
 > Body parameter
 
 ```json
@@ -373,6 +387,10 @@ fetch('/audit-logs',
 ```
 
 `GET /audit-logs`
+
+| Permissions |
+| ------- |
+| ViewAudit |
 
 <h3 id="auditcontroller.find-parameters">Parameters</h3>
 

@@ -30,6 +30,7 @@ export class AuditController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.CreateAudit]})
   @post(basePath, {
+    description: '| Permissions |\n| ------- |\n| CreateAudit |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -57,6 +58,7 @@ export class AuditController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.ViewAudit]})
   @get(`${basePath}/count`, {
+    description: '| Permissions |\n| ------- |\n| ViewAudit |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -72,6 +74,7 @@ export class AuditController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.ViewAudit]})
   @get(basePath, {
+    description: '| Permissions |\n| ------- |\n| ViewAudit |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -96,6 +99,7 @@ export class AuditController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.ViewAudit]})
   @get(`${basePath}/{id}`, {
+    description: '| Permissions |\n| ------- |\n| ViewAudit |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {

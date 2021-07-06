@@ -38,6 +38,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @post(baseUrl, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -62,6 +63,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @get(`${baseUrl}/count`, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -80,6 +82,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @get(baseUrl, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -102,6 +105,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @patch(baseUrl, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -128,6 +132,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @get(`${baseUrl}/{id}`, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       [STATUS_CODE.OK]: {
@@ -143,6 +148,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @patch(`${baseUrl}/{id}`, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
@@ -167,6 +173,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @put(`${baseUrl}/{id}`, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {
@@ -184,6 +191,7 @@ export class AuthClientController {
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.NotAllowed]})
   @del(`${baseUrl}/{id}`, {
+    description: '| Permissions |\n| ------- |\n| NotAllowed |',
     security: OPERATION_SECURITY_SPEC,
     responses: {
       '204': {

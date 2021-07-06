@@ -20,7 +20,9 @@ headingLevel: 2
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
-services
+## services
+### Permissions:
+Most applications need to control who (or what) can access data or call services. Typically, this involves requiring users to login to access protected data, or requiring authorization tokens for other applications to access protected data. So, permission keys are required for accessing those routes. To set permission keys use npm package [`loopback4-authorization`](https://www.npmjs.com/package/loopback4-authorization).
 
 Base URLs:
 
@@ -1873,6 +1875,10 @@ fetch('/auth-clients/count',
 
 `GET /auth-clients/count`
 
+| Permissions |
+| ------- |
+| NotAllowed |
+
 <h3 id="authclientcontroller.count-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
@@ -1978,6 +1984,10 @@ fetch('/auth-clients/{id}',
 ```
 
 `PUT /auth-clients/{id}`
+
+| Permissions |
+| ------- |
+| NotAllowed |
 
 > Body parameter
 
@@ -2096,6 +2106,10 @@ fetch('/auth-clients/{id}',
 
 `PATCH /auth-clients/{id}`
 
+| Permissions |
+| ------- |
+| NotAllowed |
+
 > Body parameter
 
 ```json
@@ -2185,6 +2199,10 @@ fetch('/auth-clients/{id}',
 
 `GET /auth-clients/{id}`
 
+| Permissions |
+| ------- |
+| NotAllowed |
+
 <h3 id="authclientcontroller.findbyid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
@@ -2272,6 +2290,10 @@ fetch('/auth-clients/{id}',
 ```
 
 `DELETE /auth-clients/{id}`
+
+| Permissions |
+| ------- |
+| NotAllowed |
 
 <h3 id="authclientcontroller.deletebyid-parameters">Parameters</h3>
 
@@ -2368,6 +2390,10 @@ fetch('/auth-clients',
 ```
 
 `POST /auth-clients`
+
+| Permissions |
+| ------- |
+| NotAllowed |
 
 > Body parameter
 
@@ -2508,6 +2534,10 @@ fetch('/auth-clients',
 
 `PATCH /auth-clients`
 
+| Permissions |
+| ------- |
+| NotAllowed |
+
 > Body parameter
 
 ```json
@@ -2606,6 +2636,10 @@ fetch('/auth-clients',
 ```
 
 `GET /auth-clients`
+
+| Permissions |
+| ------- |
+| NotAllowed |
 
 <h3 id="authclientcontroller.find-parameters">Parameters</h3>
 
