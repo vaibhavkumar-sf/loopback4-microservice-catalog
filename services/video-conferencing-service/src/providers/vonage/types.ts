@@ -1,4 +1,9 @@
-import {VonageEnums} from '../../enums/video-chat.enum';
+import {
+  ExternalStorageOptions,
+  VideoChatFeatures,
+  WebhookPayloadParameters,
+} from '../..';
+import {VideoChatEnums} from '../../enums/video-chat.enum';
 import {
   ArchiveResponse,
   ArchiveResponseList,
@@ -6,7 +11,7 @@ import {
   IConfig,
   MeetingOptions,
   MeetingResponse,
-  S3TargetOptions,
+  // S3TargetOptions,
   SessionOptions,
   SessionResponse,
   VideoChatInterface,
@@ -15,6 +20,10 @@ import {
 export interface VonageConfig extends IConfig {
   apiKey: string;
   apiSecret: string;
+  awsAccessKey?: string;
+  awsSecretKey?: string;
+  azureAccountKey?: string;
+  azureAccountContainer?: string;
 }
 
 /**
@@ -33,8 +42,8 @@ export interface VonageMeetingOptions extends MeetingOptions {
 }
 
 export interface VonageMeetingResponse extends MeetingResponse {
-  mediaMode: VonageEnums.MediaMode;
-  archiveMode: VonageEnums.ArchiveMode;
+  mediaMode: VideoChatEnums.MediaMode;
+  archiveMode: VideoChatEnums.ArchiveMode;
 }
 
 /**
@@ -45,8 +54,9 @@ export interface VonageMeetingResponse extends MeetingResponse {
  * @param data optional string parameter if required for successfully creating session
  */
 export interface VonageSessionOptions extends SessionOptions {
+  sessionId: string;
   meetingId: string;
-  role?: VonageEnums.Role;
+  role?: VideoChatEnums.Role;
   expireTime?: Date;
   data?: string;
 }
@@ -59,30 +69,24 @@ export interface VonageSessionOptions extends SessionOptions {
  * @param fallback: optional parameter used for vonage to set fallback if upload fails. if it is none, it will not be available.
  * setting fallback to "opentok" will make the archive available  at the vonage dashboard
  */
-export interface VonageS3TargetOptions extends S3TargetOptions {
-  accessKey: string;
-  secretKey: string;
+export interface VonageS3TargetOptions extends ExternalStorageOptions {
   region: string;
   bucket: string;
   endpoint?: string;
-  fallback: VonageEnums.FallbackType;
+  fallback: VideoChatEnums.FallbackType;
 }
 
 /**
  * @interface VonageAzureTargetOptions
  * @param accountName The Windows Azure account name
- * @param accountKey The Windows Azure account key
- * @param container The Windows Azure container name
  * @param domain (optional) — The Windows Azure domain in which the container resides.
  * @param fallback optional parameter used for vonage to set fallback if upload fails. if it is none, it will not be available.
  * setting fallback to "opentok" will make the archive available  at the vonage dashboard
  */
 export interface VonageAzureTargetOptions extends AzureTargetOptions {
   accountName: string;
-  accountKey: string;
-  container: string;
   domain?: string;
-  fallback: VonageEnums.FallbackType;
+  fallback: VideoChatEnums.FallbackType;
 }
 
 /**
@@ -111,7 +115,7 @@ interface VonageConnection {
  *   @param name The name, if there was one, passed in when the publisher associated with this stream was initialized
  *   @param videoType The type of video sent on this stream, either "camera" or "screen" (or undefined for an audio-only stream).
  */
-export interface VonageSessionWebhookPayload {
+export interface VonageSessionWebhookPayload extends WebhookPayloadParameters {
   sessionId: string;
   projectId: string;
   event: string;
@@ -138,10 +142,7 @@ export interface VonageVideoChat extends VideoChatInterface {
    * @param options: object with type @interface SessionOptions
    * @returns Promise when resolved returns object of type @interface SessionResponse
    */
-  getToken(
-    sessionId: string,
-    options: SessionOptions,
-  ): Promise<SessionResponse>;
+  getToken(options: SessionOptions): Promise<SessionResponse>;
   /**
    * @function startArchive store vonage/twilio/agora archives in cloud/s3/azure
    *
@@ -181,4 +182,7 @@ export interface VonageVideoChat extends VideoChatInterface {
   //  * @function deleteUploadTarget delete the upload target from s3/azure
   //  */
   // deleteUploadTarget(): Promise<void>;
+  getFeatures(): VideoChatFeatures;
+
+  checkWebhookPayload(webhookPaylod: WebhookPayloadParameters): Promise<void>;
 }

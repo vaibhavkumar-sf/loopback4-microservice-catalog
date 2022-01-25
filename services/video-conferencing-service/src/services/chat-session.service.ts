@@ -3,7 +3,6 @@ import {inject} from '@loopback/context';
 import {repository} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 
-import {VonageEnums} from '../enums';
 import {MeetLinkGeneratorProvider, VideoChatBindings} from '../keys';
 import {SessionAttendees, VideoChatSession} from '../models';
 import {VonageSessionWebhookPayload} from '../providers/vonage';
@@ -60,11 +59,14 @@ export class ChatSessionService {
         scheduledTime = meetingOptions.scheduleTime;
       }
     }
+    let meetingLinkId = await this.generator();
+    meetingOptions.meetingId = meetingLinkId;
 
     const meetingResp = await this.videoChatProvider.getMeetingLink(
       meetingOptions,
     );
-    const meetingLinkId = await this.generator();
+
+    meetingLinkId = meetingResp.meetingId ?? meetingLinkId;
 
     //provider for this cryptoRandomString
     const videoSessionDetail = new VideoChatSession({
@@ -82,10 +84,9 @@ export class ChatSessionService {
 
   async getMeetingToken(
     sessionOptions: SessionOptions,
-    meetingLinkId: string,
   ): Promise<SessionResponse> {
     let errorMessage;
-
+    const meetingLinkId = sessionOptions.meetingLinkId;
     if (typeof meetingLinkId !== 'string' || !meetingLinkId) {
       errorMessage = 'Meeting link should be a valid string';
 
@@ -145,8 +146,8 @@ export class ChatSessionService {
         startTime: new Date(),
       });
     }
-
-    return this.videoChatProvider.getToken(session.sessionId, sessionOptions);
+    Object.assign(sessionOptions, {sessionId: session.sessionId});
+    return this.videoChatProvider.getToken(sessionOptions);
   }
 
   async editMeeting(
@@ -167,6 +168,11 @@ export class ChatSessionService {
       errorMessage = `Meeting link ${meetingLinkId} not found`;
 
       throw new HttpErrors.NotFound(errorMessage);
+    }
+
+    if (isScheduled && !this.videoChatProvider.getFeatures().schedule) {
+      errorMessage = `Cannot schedule meeting, this feature is not available for this provider`;
+      throw new HttpErrors.BadRequest(errorMessage);
     }
 
     if (isScheduled && !scheduleTime) {
@@ -229,72 +235,8 @@ export class ChatSessionService {
     });
   }
 
-  async checkWebhookPayload(webhookPayload: VonageSessionWebhookPayload) {
-    try {
-      const {
-        connection: {data},
-        event,
-        sessionId,
-      } = webhookPayload;
-
-      const sessionAttendeeDetail =
-        await this.sessionAttendeesRepository.findOne({
-          where: {
-            sessionId: sessionId,
-            attendee: data,
-          },
-        });
-      if (!sessionAttendeeDetail) {
-        if (event === VonageEnums.SessionWebhookEvents.ConnectionCreated) {
-          await this.sessionAttendeesRepository.create({
-            sessionId: sessionId,
-            attendee: data,
-            createdOn: new Date(),
-            isDeleted: false,
-            extMetadata: {webhookPayload: webhookPayload},
-          });
-        }
-      } else {
-        const updatedAttendee = {
-          modifiedOn: new Date(),
-          isDeleted: sessionAttendeeDetail.isDeleted,
-          extMetadata: {webhookPayload: webhookPayload},
-        };
-
-        if (event === VonageEnums.SessionWebhookEvents.ConnectionCreated) {
-          updatedAttendee.isDeleted = false;
-          await this.sessionAttendeesRepository.updateById(
-            sessionAttendeeDetail.id,
-            updatedAttendee,
-          );
-        } else if (event === VonageEnums.SessionWebhookEvents.StreamCreated) {
-          await this.sessionAttendeesRepository.updateById(
-            sessionAttendeeDetail.id,
-            updatedAttendee,
-          );
-        } else if (event === VonageEnums.SessionWebhookEvents.StreamDestroyed) {
-          await this.processStreamDestroyedEvent(
-            webhookPayload,
-            sessionAttendeeDetail,
-            updatedAttendee,
-          );
-        } else if (
-          event === VonageEnums.SessionWebhookEvents.ConnectionDestroyed
-        ) {
-          updatedAttendee.isDeleted = true;
-          await this.sessionAttendeesRepository.updateById(
-            sessionAttendeeDetail.id,
-            updatedAttendee,
-          );
-        } else {
-          //DO NOTHING
-        }
-      }
-    } catch (error) {
-      throw new HttpErrors.InternalServerError(
-        'Error occured triggering webhook event',
-      );
-    }
+  checkWebhookPayload(webhookPayload: VonageSessionWebhookPayload) {
+    return this.videoChatProvider.checkWebhookPayload(webhookPayload);
   }
   async processStreamDestroyedEvent(
     webhookPayload: VonageSessionWebhookPayload,

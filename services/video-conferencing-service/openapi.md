@@ -368,6 +368,101 @@ HTTPBearer
 
 <h1 id="video-conferencing-service-videochatsessioncontroller">VideoChatSessionController</h1>
 
+## VideoChatSessionController.getMeetingToken
+
+<a id="opIdVideoChatSessionController.getMeetingToken"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('/session/token',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```javascript--nodejs
+const fetch = require('node-fetch');
+const inputBody = {};
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'Authorization':'Bearer {access-token}'
+};
+
+fetch('/session/token',
+{
+  method: 'POST',
+  body: JSON.stringify(inputBody),
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+`POST /session/token`
+
+Used for Generating token, which is used for connecting to a room/session on a client side. 
+      In vonage, there are three different roles (Moderator, Subscriber, Publisher). 
+      We can use expire time for limited validity of a token. Successful 
+      execution will send a token.
+
+| Permissions |
+| ------- |
+| GenerateMeetingToken   |
+
+> Body parameter
+
+```json
+{}
+```
+
+<h3 id="videochatsessioncontroller.getmeetingtoken-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|object|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+null
+```
+
+<h3 id="videochatsessioncontroller.getmeetingtoken-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+<h3 id="videochatsessioncontroller.getmeetingtoken-responseschema">Response Schema</h3>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+HTTPBearer
+</aside>
+
 ## VideoChatSessionController.getAttendeesList
 
 <a id="opIdVideoChatSessionController.getAttendeesList"></a>
@@ -519,102 +614,6 @@ Used to stop the current active meeting. Meeting cannot be stopped again if it i
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|MessageRecipient PATCH success|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-HTTPBearer
-</aside>
-
-## VideoChatSessionController.getMeetingToken
-
-<a id="opIdVideoChatSessionController.getMeetingToken"></a>
-
-> Code samples
-
-```javascript
-const inputBody = '{}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json',
-  'Authorization':'Bearer {access-token}'
-};
-
-fetch('/session/{meetingLinkId}/token',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```javascript--nodejs
-const fetch = require('node-fetch');
-const inputBody = {};
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json',
-  'Authorization':'Bearer {access-token}'
-};
-
-fetch('/session/{meetingLinkId}/token',
-{
-  method: 'POST',
-  body: JSON.stringify(inputBody),
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-`POST /session/{meetingLinkId}/token`
-
-Used for Generating token, which is used for connecting to a room/session on a client side. 
-      In vonage, there are three different roles (Moderator, Subscriber, Publisher). 
-      We can use expire time for limited validity of a token. Successful 
-      execution will send a token.
-
-| Permissions |
-| ------- |
-| GenerateMeetingToken   |
-
-> Body parameter
-
-```json
-{}
-```
-
-<h3 id="videochatsessioncontroller.getmeetingtoken-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|meetingLinkId|path|string|true|none|
-|body|body|object|false|none|
-
-> Example responses
-
-> 200 Response
-
-```json
-null
-```
-
-<h3 id="videochatsessioncontroller.getmeetingtoken-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
-
-<h3 id="videochatsessioncontroller.getmeetingtoken-responseschema">Response Schema</h3>
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:

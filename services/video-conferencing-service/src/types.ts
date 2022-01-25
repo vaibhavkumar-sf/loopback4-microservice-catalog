@@ -25,10 +25,7 @@ export interface VideoChatInterface {
    * @param options: object with type @interface SessionOptions
    * @returns Promise when resolved returns object of type @interface SessionResponse
    */
-  getToken(
-    sessionId: string,
-    options: SessionOptions,
-  ): Promise<SessionResponse>;
+  getToken(options: SessionOptions): Promise<SessionResponse>;
   /**
    * @function getArchives get a specific recorded/composed archive or a list of archives
    * @param archiveId: optional archive id of type number
@@ -47,11 +44,20 @@ export interface VideoChatInterface {
    * @function setUploadTarget set the upload target
    * @param config of type @interface S3TargetOptions or @interface AzureTargetOptions
    */
-  setUploadTarget(config: S3TargetOptions | AzureTargetOptions): Promise<void>;
+  setUploadTarget(config: ExternalStorageOptions): Promise<void>;
   // /**
   //  * @function deleteUploadTarget delete the upload target from s3/azure
   //  */
   // deleteUploadTarget(): Promise<void>;
+
+  getFeatures(): VideoChatFeatures;
+
+  checkWebhookPayload(webhookPayload: WebhookPayloadParameters): Promise<void>;
+}
+
+export interface VideoChatFeatures {
+  schedule: boolean;
+  archive: boolean;
 }
 
 /**
@@ -86,17 +92,27 @@ export interface ArchiveResponseList {
 }
 
 /**
+ * @interface ExternalStorageOptions
+ * @param name name of the external storage, For example : 'AWSS3', 'AZURE'
+ */
+
+export interface ExternalStorageOptions {
+  name: ExternalStorageName;
+}
+
+/**
  * @interface S3TargetOptions
  * @param config object containing azure/s3 details
- * @param accessKey access key id of aws iam account
- * @param secretKey secret access key of aws iam account
  * @param bucket s3 bucket name
  */
-export interface S3TargetOptions {
-  accessKey: string;
-  secretKey: string;
-  region: string;
-  bucket: string;
+// export interface S3TargetOptions extends ExternalStorageOptions {
+//   region: string;
+//   bucket: string;
+// }
+
+export enum ExternalStorageName {
+  AWSS3 = 'AWSS3',
+  AZURE = 'AZURE',
 }
 
 /**
@@ -106,11 +122,13 @@ export interface S3TargetOptions {
  * @param container The Windows Azure container name
  * @param domain (optional) — The Windows Azure domain in which the container resides.
  */
-export interface AzureTargetOptions {
+export interface AzureTargetOptions extends ExternalStorageOptions {
   accountName: string;
-  accountKey: string;
-  container: string;
   domain?: string;
+}
+
+export interface WebhookPayloadParameters {
+  event?: string;
 }
 
 /**
@@ -123,11 +141,13 @@ export interface AzureTargetOptions {
 export interface MeetingOptions {
   isScheduled: boolean;
   scheduleTime?: Date;
+  meetingId?: string;
 }
 
 export interface MeetingResponse {
   sessionId: string;
   isArchived?: boolean;
+  meetingId?: string;
 }
 
 /**
@@ -136,15 +156,16 @@ export interface MeetingResponse {
  * @param expireTime set the ttl (time to live) for a session created For twilio, it is max 4 hours.
  */
 export interface SessionOptions {
-  meetingLink: string;
+  meetingLink?: string;
   expireTime?: Date;
   data?: string;
+  meetingLinkId?: string;
 }
 export interface IArchiveService {
   getArchive(archiveId: string): void;
   getArchives(): void;
   deleteArchive(archiveId: string): Promise<void>;
-  setUploadTarget(body: S3TargetOptions | AzureTargetOptions): Promise<void>;
+  setUploadTarget(body: ExternalStorageOptions): Promise<void>;
 }
 
 export interface ISessionService {

@@ -1,4 +1,6 @@
 import {Provider, service} from '@loopback/core';
+import {VonageSessionWebhookPayload} from '.';
+import {VideoChatFeatures} from '../..';
 import {
   ArchiveResponse,
   ArchiveResponseList,
@@ -28,10 +30,8 @@ export class VonageProvider implements Provider<VonageVideoChat> {
         this.vonageService.getMeetingLink(meetingOptions),
 
       getToken: async (
-        sessionId: string,
         options: VonageSessionOptions,
-      ): Promise<SessionResponse> =>
-        this.vonageService.getToken(sessionId, options),
+      ): Promise<SessionResponse> => this.vonageService.getToken(options),
       getArchives: async (
         archiveId: string | null,
       ): Promise<ArchiveResponse | ArchiveResponseList> =>
@@ -45,6 +45,12 @@ export class VonageProvider implements Provider<VonageVideoChat> {
       ): Promise<void> => {
         await this.vonageService.setUploadTarget(storageConfig);
       },
+
+      getFeatures: (): VideoChatFeatures => this.vonageService.getFeatures(),
+      checkWebhookPayload: (
+        webhookPayload: VonageSessionWebhookPayload,
+      ): Promise<void> =>
+        this.vonageService.checkWebhookPayload(webhookPayload),
     };
   }
 }

@@ -57,7 +57,7 @@ export class VideoChatSessionController {
 
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKeys.GenerateToken]})
-  @post('/session/{meetingLinkId}/token', {
+  @post('/session/token', {
     description: `Used for Generating token, which is used for connecting to a room/session on a client side. 
       In vonage, there are three different roles (Moderator, Subscriber, Publisher). 
       We can use expire time for limited validity of a token. Successful 
@@ -79,12 +79,8 @@ export class VideoChatSessionController {
   async getMeetingToken(
     @requestBody()
     sessionOptions: SessionOptions,
-    @param.path.string('meetingLinkId') meetingLinkId: string,
   ): Promise<SessionResponse> {
-    return this.chatSessionService.getMeetingToken(
-      sessionOptions,
-      meetingLinkId,
-    );
+    return this.chatSessionService.getMeetingToken(sessionOptions);
   }
 
   @authenticate(STRATEGY.BEARER)

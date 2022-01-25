@@ -1,4 +1,4 @@
-export namespace VonageEnums {
+export namespace VideoChatEnums {
   export enum FallbackType {
     None = 'none',
     Opentok = 'opentok',

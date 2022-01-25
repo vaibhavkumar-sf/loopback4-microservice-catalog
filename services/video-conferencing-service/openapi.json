@@ -144,6 +144,43 @@
         "operationId": "VideoChatArchiveController.getArchives"
       }
     },
+    "/session/token": {
+      "post": {
+        "x-controller-name": "VideoChatSessionController",
+        "x-operation-name": "getMeetingToken",
+        "tags": [
+          "VideoChatSessionController"
+        ],
+        "description": "Used for Generating token, which is used for connecting to a room/session on a client side. \n      In vonage, there are three different roles (Moderator, Subscriber, Publisher). \n      We can use expire time for limited validity of a token. Successful \n      execution will send a token.\n\n| Permissions |\n| ------- |\n| GenerateMeetingToken   |\n",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "sessionId": "string",
+                  "token": "string"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "operationId": "VideoChatSessionController.getMeetingToken"
+      }
+    },
     "/session/{meetingLinkId}/attendees": {
       "get": {
         "x-controller-name": "VideoChatSessionController",
@@ -217,53 +254,6 @@
           }
         ],
         "operationId": "VideoChatSessionController.endSession"
-      }
-    },
-    "/session/{meetingLinkId}/token": {
-      "post": {
-        "x-controller-name": "VideoChatSessionController",
-        "x-operation-name": "getMeetingToken",
-        "tags": [
-          "VideoChatSessionController"
-        ],
-        "description": "Used for Generating token, which is used for connecting to a room/session on a client side. \n      In vonage, there are three different roles (Moderator, Subscriber, Publisher). \n      We can use expire time for limited validity of a token. Successful \n      execution will send a token.\n\n| Permissions |\n| ------- |\n| GenerateMeetingToken   |\n",
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "sessionId": "string",
-                  "token": "string"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "meetingLinkId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            }
-          }
-        },
-        "operationId": "VideoChatSessionController.getMeetingToken"
       }
     },
     "/session/{meetingLinkId}": {

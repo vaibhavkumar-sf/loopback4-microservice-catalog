@@ -1,7 +1,13 @@
-import {expect, sinon} from '@loopback/testlab';
+import {
+  createStubInstance,
+  expect,
+  sinon,
+  StubbedInstanceWithSinonAccessor,
+} from '@loopback/testlab';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import {VonageEnums} from '../../../enums';
+import {ExternalStorageName} from '../../..';
+import {VideoChatEnums} from '../../../enums';
 import {
   VonageAzureTargetOptions,
   VonageConfig,
@@ -10,6 +16,7 @@ import {
 } from '../../../providers/vonage';
 
 import {VonageService} from '../../../providers/vonage/vonage.service';
+import {SessionAttendeesRepository} from '../../../repositories';
 import {
   getVonageArchive,
   getVonageArchiveList,
@@ -22,9 +29,12 @@ describe('VonageProvider (unit)', () => {
   const vonageFailureError = new Error('Vonage failure');
   const archiveId = 'dummy-archive-id';
 
+  let sessionAttendeesRepo: StubbedInstanceWithSinonAccessor<SessionAttendeesRepository>;
+
   let vonageProvider: VonageProvider;
   let vonageService: VonageService;
   let config: VonageConfig;
+  sessionAttendeesRepo = createStubInstance(SessionAttendeesRepository);
 
   beforeEach(() => setUp());
   afterEach(() => sinon.restore());
@@ -36,7 +46,7 @@ describe('VonageProvider (unit)', () => {
       timeToStart: 30,
     };
 
-    expect.throws(() => new VonageService(config));
+    expect.throws(() => new VonageService(config, sessionAttendeesRepo));
   });
 
   describe('getMeetingLink', () => {
@@ -106,9 +116,7 @@ describe('VonageProvider (unit)', () => {
         .stub(vonageService.VonageClient, 'generateToken')
         .returns('dummy-token');
 
-      const result = await vonageProvider
-        .value()
-        .getToken(sessionId, sessionOptions);
+      const result = await vonageProvider.value().getToken(sessionOptions);
       expect(result).to.have.property('sessionId').which.eql(sessionId);
       expect(result).to.have.property('token').which.eql('dummy-token');
     });
@@ -121,7 +129,7 @@ describe('VonageProvider (unit)', () => {
 
       const error = await vonageProvider
         .value()
-        .getToken(sessionId, sessionOptions)
+        .getToken(sessionOptions)
         .catch(err => err);
       expect(error).instanceOf(Error);
     });
@@ -208,13 +216,29 @@ describe('VonageProvider (unit)', () => {
 
   describe('setUploadTarget', () => {
     const vonageS3Options: VonageS3TargetOptions = {
-      accessKey: '1234',
-      secretKey: '****',
+      // accessKey: '1234',
+      // secretKey: '****',
       region: 'dummy-region',
       bucket: 'dummy-bucket',
       endpoint: 'dummy-endpoint',
-      fallback: VonageEnums.FallbackType.Opentok,
+      fallback: VideoChatEnums.FallbackType.Opentok,
+      name: ExternalStorageName.AWSS3,
     };
+    it('returns an error if options are null', async () => {
+      config = {
+        apiKey: 'dummy',
+        apiSecret: 'dummy',
+        timeToStart: 30,
+      };
+      vonageService = new VonageService(config, sessionAttendeesRepo);
+      vonageProvider = new VonageProvider(vonageService);
+
+      const error = await vonageProvider
+        .value()
+        .setUploadTarget(vonageS3Options)
+        .catch(err => err);
+      expect(error).instanceOf(Error);
+    });
     it('sets the upload target for S3', async () => {
       const mock = new MockAdapter(axios);
       mock
@@ -227,11 +251,10 @@ describe('VonageProvider (unit)', () => {
 
     it('sets the upload target for Azure', async () => {
       const azureOptions: VonageAzureTargetOptions = {
+        name: ExternalStorageName.AZURE,
         accountName: 'dummy-account-name',
-        accountKey: 'dummy-account-key',
-        container: 'dummy-container',
         domain: 'dummy-domain',
-        fallback: VonageEnums.FallbackType.Opentok,
+        fallback: VideoChatEnums.FallbackType.Opentok,
       };
       const mock = new MockAdapter(axios);
       mock
@@ -262,9 +285,14 @@ describe('VonageProvider (unit)', () => {
       apiKey: 'dummy',
       apiSecret: 'dummy',
       timeToStart: 30,
+      awsAccessKey: '1234',
+      awsSecretKey: '****',
+      azureAccountKey: 'dummy',
+      azureAccountContainer: 'dummy',
     };
+    sessionAttendeesRepo = createStubInstance(SessionAttendeesRepository);
 
-    vonageService = new VonageService(config);
+    vonageService = new VonageService(config, sessionAttendeesRepo);
     vonageProvider = new VonageProvider(vonageService);
   }
 });
